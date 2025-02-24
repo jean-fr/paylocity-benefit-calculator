@@ -6,6 +6,5 @@ namespace Api.Services
     {
         Task<List<EmployeeResponse>> GetAllAsync();
         Task<EmployeeResponse?> GetByIdAsync(int id);
-        Task<EmployeePaycheckResponse> GeneratePaycheckAsync(int employeeId);
     }
 }

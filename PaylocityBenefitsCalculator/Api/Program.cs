@@ -37,7 +37,7 @@ builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddTransient<IDependentRepository, DependentRepository>();
 builder.Services.AddTransient<IDependentService, DependentService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
-
+builder.Services.AddTransient<IPaycheckService, PaycheckService>();
 
 var mapperConfiguration = new MapperConfiguration(cfg =>
 {
@@ -55,7 +55,7 @@ var mapperConfiguration = new MapperConfiguration(cfg =>
     cfg.CreateMap<EmployeeResponse, GetEmployeeDto>().ForMember(e => e.Dependents, act => act.Ignore());
     cfg.CreateMap<DependentResponse, GetDependentDto>();
     cfg.CreateMap<DependentResponse, GetEmployeeListDependentDto>();
-    cfg.CreateMap<EmployeePaycheckResponse, GetEmployeePaycheckDto>();
+    cfg.CreateMap<PaycheckResponse, GetEmployeePaycheckDto>();
 
 });
 var mapper = mapperConfiguration.CreateMapper();

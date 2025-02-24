@@ -2,6 +2,7 @@
 using Api.Dtos.Dependent;
 using Api.Dtos.Employee;
 using Api.Models;
+using Api.Repositories;
 using Api.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,15 @@ namespace Api.Controllers;
 public class EmployeesController : ControllerBase
 {
     private readonly IEmployeeService _employeeService;
+    private readonly IPaycheckService _paycheckService;
     private readonly IMapper _mapper;
+     private readonly IEmployeeRepository _employeeRepository;
 
-    public EmployeesController(IEmployeeService employeeService, IMapper mapper)
+    public EmployeesController(IEmployeeService employeeService, IPaycheckService paycheckService,IEmployeeRepository employeeRepository, IMapper mapper)
     {
         _employeeService = employeeService;
+        _paycheckService = paycheckService;
+        _employeeRepository = employeeRepository;
         _mapper = mapper;
     }
 
@@ -68,25 +73,15 @@ public class EmployeesController : ControllerBase
     [HttpGet("{id}/paycheck")]
     public async Task<ActionResult<ApiResponse<GetEmployeePaycheckDto>>> GetPaycheck(int id)
     {
-        try
-        {
-            var paycheck = await _employeeService.GeneratePaycheckAsync(id);
+        var employee = await _employeeRepository.GetByIdAsync(id);
 
-            return new ApiResponse<GetEmployeePaycheckDto>
-            {
-                Data = _mapper.Map<GetEmployeePaycheckDto>(paycheck)
-            };
-        }
-        catch (Exception ex)
+        if(employee==null) return NotFound();
+
+        var paycheck = await _paycheckService.GeneratePaycheckAsync(employee);
+
+        return new ApiResponse<GetEmployeePaycheckDto>
         {
-            if (ex.Message == "NotFound")
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+            Data = _mapper.Map<GetEmployeePaycheckDto>(paycheck)
+        };
     }
 }
